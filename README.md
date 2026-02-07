@@ -15,4 +15,6 @@ Les données sont scraper du site automobile.tn
  * Ben Rached Mouadh 
 
 ## RoadMap 
+- [X] Setup
+- [ ] Scraping 
 - [ ] EDA

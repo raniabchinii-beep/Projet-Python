@@ -21,5 +21,5 @@ Les données sont scraper du site automobile.tn
 
 ## RoadMap 
 - [X] Setup
-- [ ] Scraping 
+- [X] Scraping 
 - [ ] EDA

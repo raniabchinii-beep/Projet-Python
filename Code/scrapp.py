@@ -8,10 +8,7 @@ import os
 BASE_URL = "https://www.automobile.tn"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
-# ======================================
 # BRANDS
-# ======================================
-
 def scrape_brands():
 
     soup = BeautifulSoup(
@@ -37,10 +34,7 @@ def scrape_brands():
     return brands
 
 
-# ======================================
 # MODELS (pages modèles)
-# ======================================
-
 def scrape_models_pages(brand):
 
     soup = BeautifulSoup(
@@ -66,11 +60,7 @@ def scrape_models_pages(brand):
 
     return models
 
-
-# ======================================
 # VERSIONS D’UN MODÈLE
-# ======================================
-
 def scrape_versions(model):
 
     soup = BeautifulSoup(
@@ -82,7 +72,6 @@ def scrape_versions(model):
 
     table = soup.find("table", class_="versions")
 
-    # cas : une seule version → pas de table
     if not table:
         versions.append({
             **model,
@@ -112,11 +101,7 @@ def scrape_versions(model):
 
     return versions
 
-
-# ======================================
 # SPECS VERSION
-# ======================================
-
 def scrape_specs(version):
 
     soup = BeautifulSoup(
@@ -153,11 +138,7 @@ def scrape_specs(version):
 
     return specs
 
-
-# ======================================
 # FULL PIPELINE
-# ======================================
-
 def scrape_all():
 
     rows = []
@@ -191,11 +172,6 @@ def scrape_all():
 
     return pd.DataFrame(rows)
 
-
-# ======================================
-# RUN
-# ======================================
-
 if __name__ == "__main__":
 
     df = scrape_all()
@@ -203,5 +179,5 @@ if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
     df.to_csv("cars_versions_specs.csv", index=False)
 
-    print("\n✅ DONE")
+    print("\n DONE")
     print("Rows:", len(df))

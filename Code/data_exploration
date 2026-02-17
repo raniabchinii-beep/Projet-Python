@@ -1,0 +1,188 @@
+import pandas as pd
+import numpy as np
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.impute import SimpleImputer
+import mlflow
+import mlflow.sklearn
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+
+
+
+"""def run_advanced_eda(file_path="Code/data/carsdataset.csv"):
+
+    #Performs Advanced Exploratory Data Analysis on the bank churn dataset.
+    
+    df = pd.read_csv(file_path)
+    # Drop non-predictive columns for visualization
+    #df_final = df.drop(['performances_autonomie_électrique_(wltp)','consommation_consommation_électrique_(wltp)','consommation_temps_de_recharge_normale_(ac)','consommation_temps_de_recharge_rapide_(dc)'], axis=1)
+    
+    print("--- Dataset Shape ---")
+    print(df.shape)
+    print(df.isnull().sum())
+
+    print("\nAdvanced EDA completed. New plots saved in 'data/' directory.")
+"""
+# Set MLflow experiment name
+#EXPERIMENT_NAME = "Cars"
+
+def prepare_data_cars(file_path="Code/data/cars_versions_specs.csv"):
+
+    df = pd.read_csv(file_path)
+    
+    #print(df.columns)
+    df1=df.drop(['consommation_temps_de_recharge_rapide_(dc)',
+                 'consommation_temps_de_recharge_normale_(ac)',
+                 'consommation_consommation_électrique_(wltp)',
+                 'performances_autonomie_électrique_(wltp)',
+                 'equipements_extérieurs_jantes'],
+                axis=1)
+    
+
+    
+    numerical_features = [
+    'price',
+    'caractéristiques_nombre_de_places',
+    'motorisation_nombre_de_cylindres',
+    'motorisation_puissance_(ch.din)',
+    'transmission_nombre_de_rapports'
+]
+    categorical_features = [
+    'brand',
+    'model', 
+    'version', 
+    'caractéristiques_nombre_de_portes',
+    'caractéristiques_disponibilité',
+    'caractéristiques_carrosserie',
+    'caractéristiques_garantie',
+    'motorisation_energie',
+    'transmission_boîte',
+    'transmission_transmission',
+    'equipements_intérieurs_sellerie',
+    'equipements_intérieurs_volant',
+    'equipements_intérieurs_toit',
+    'equipements_fonctionnels_frein_de_stationnement',
+    'equipements_fonctionnels_modes_de_conduite',
+    'consommation_consommation_mixte',
+    'motorisation_puissance_fiscale'
+]
+    
+
+    numeric_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="mean")),
+    ("scaler", StandardScaler())
+    ])
+    
+    categorical_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore"))
+    ])
+    preprocessor = ColumnTransformer([
+    ("num", numeric_pipeline, numerical_features),
+    ("cat", categorical_pipeline, categorical_features)
+    ])
+    X = preprocessor.fit_transform(df1)
+
+
+    return X, preprocessor
+
+
+
+def prepare_data_users(file_path="Code/data/users_preferences.csv"):
+
+    df = pd.read_csv(file_path)
+    
+    #print(df.columns)
+    
+    categorical_features = ['sexe',
+                            'situation_familiale',
+                            'energie_pref',
+                            'boite_pref',
+                            'mode_transmission',
+                            'transmission_pref']
+    numerical_features = ['user_id',
+                          'age',
+                          'revenu_mensuel',
+                          'nombre_enfants',
+                          'usage_travail',
+                          'usage_ville',
+                          'usage_long_voyage',
+                          'usage_montagne',
+                          'usage_camping',
+                          'usage_desert',
+                          'places_min',
+                          'portes_min']
+    
+
+    numeric_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="mean")),
+    ("scaler", StandardScaler())
+    ])
+    
+    categorical_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore"))
+    ])
+    preprocessor = ColumnTransformer([
+    ("num", numeric_pipeline, numerical_features),
+    ("cat", categorical_pipeline, categorical_features)
+    ])
+    X_processed = preprocessor.fit_transform(df)
+
+
+    return print(X_processed.shape)
+
+
+def train_Kmeans_Mlflow(X, n_clusters=4, run_name="kmeans_run"):
+    with mlflow.start_run(run_name=run_name):
+
+        # 🔹 Scaling
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        # 🔹 Modèle
+        model = KMeans(
+            n_clusters=n_clusters,
+            random_state=42,
+            n_init=10
+        )
+
+        clusters = model.fit_predict(X_scaled)
+
+        # 🔹 Métrique non supervisée
+        sil_score = silhouette_score(X_scaled, clusters)
+
+        # 🔹 Logging paramètres
+        mlflow.log_param("model", "KMeans")
+        mlflow.log_param("n_clusters", n_clusters)
+
+        # 🔹 Logging métriques
+        mlflow.log_metric("silhouette_score", sil_score)
+        mlflow.log_metric("inertia", model.inertia_)
+
+        # 🔹 Logging modèles
+        mlflow.sklearn.log_model(model, "kmeans_model")
+        mlflow.sklearn.log_model(scaler, "scaler")
+
+        print("✅ Run MLflow enregistré")
+        print("Silhouette score:", sil_score)
+
+        return model, clusters, sil_score
+
+
+
+
+if __name__ == "__main__":
+    prepare_data_cars()
+    prepare_data_users()
+    #df = pd.read_csv("Code/data/cars_versions_specs.csv")
+
+# étape 1
+    X, preprocessor = prepare_data_cars()
+
+# étape 2
+    model, clusters, score = train_Kmeans_Mlflow(X, n_clusters=6)
+#train_Kmeans_Mlflow()

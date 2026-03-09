@@ -13,7 +13,7 @@ Les données sont scraper du site automobile.tn
 
 ## 🎯 Objectifs
 1. Collecter >1000  véhicules avec >10 caractéristiques
-2. Développer un système de recommandation personnalisé
+2. Développer un système de recommandation personnalisé Content Based
 3. Créer une API et une interface web
 
 ## Team
@@ -25,4 +25,9 @@ Les données sont scraper du site automobile.tn
 ## RoadMap 
 - [X] Setup
 - [X] Scraping 
-- [ ] EDA
+- [X] EDA
+- [X] Preprossecing
+- [X] Models
+- [X] EndPoints
+- [X] Front End
+- [ ] Containers Docker

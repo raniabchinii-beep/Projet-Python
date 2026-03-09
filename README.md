@@ -26,7 +26,7 @@ Les données sont scraper du site automobile.tn
 - [X] Setup
 - [X] Scraping 
 - [X] EDA
-- [X] Preprossecing
+- [X] Preproccesing
 - [X] Models
 - [X] EndPoints
 - [X] Front End

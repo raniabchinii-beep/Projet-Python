@@ -38,4 +38,4 @@ Les données sont scraper du site automobile.tn
 * Nettoyage de données et training : Python
 * Test : Swagger
 * Coding : VSCode
-* Hébergement: Docker
+* Déploiement: Docker

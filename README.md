@@ -34,8 +34,8 @@ Les données sont scraper du site automobile.tn
 
 ## Languages utilisés
 * Front : React
-* Back : FastApi
-* Nettoyage de données et training : Python
+* Back : FastAPI
+* Nettoyage de données et training : Notebook Python
 * Test : Swagger
 * Coding : VSCode
 * Déploiement: Docker
